@@ -15,7 +15,7 @@ Agents in all games can only see a certain number of tiles in all directions. Th
 
 You can change the size of the game space (**game_space_width** and **game_space_height**) and, generally speaking, you can also change the number of agents (**num_agents**) and a few other parameters (all in xxx_game_train.py). By and large, the play areas are randomly generated, and the amount of walls can be adjusted by changing the **walls** variable.
 
-During training, the models, and some statistics are saved after each episode in a directory named **modeltype_gamename_game_save**. Relaunching a script will attempt to load the saved models. If you increase the number of agents after models have been saved, new models will randomly obtain parameters from one of the previously saved models. If a model starts to NaN (which occasionally happens), determine which one it is, delete the parameters, and copy another model's parameters into its place.
+During training, the models, and some statistics are saved after each episode in a directory named **modeltype_gamename_game_save**. You can use **plot_graphs.ipynb** to monitor training progress. Relaunching a script will attempt to load the saved models. If you increase the number of agents after models have been saved, new models will randomly obtain parameters from one of the previously saved models. If a model starts to NaN (which occasionally happens), determine which one it is, delete the parameters, and copy another model's parameters into its place.
 
 The **print_preds** variable allows one to visualize model predictions. I used it while developing these experiments, but haven't enabled it lately, so it might be broken. Anyways, if it does work, you'll see an output like this:
 

@@ -8,7 +8,7 @@ pytorch and numpy
 Multi-Agent Reinforcement Learning (MARL) is an area of research that has interested me for quite some time - especially after seeing what OpenAI five's Dota 2 (https://openai.com/projects/five/) and DeepMind's AlphaStar Starcraft II (https://deepmind.com/blog/article/alphastar-mastering-real-time-strategy-game-starcraft-ii) projects were able to achieve. I decided to run some simple MARL experiments of my own in order to familiarize myself with the implementation of these mechanisms and to observe how agents cooperate with one another to solve problems. This work is loosely aligned with F-Secure's Project Blackfin (https://www.f-secure.com/en/about-us/research/project-blackfin) - a research project aimed at using collective intelligence techniques to solve cyber security problems. One of Project Blackfin's aims is to discover and utilize emergent behaviours that arise from the interaction of many simple agents in a system. Although the experiments detailed here aren't directly applicable to the cyber securty field, I hoped to find interesting emergent behaviours in the experimental environments that might spark some creativity when considering other application areas.
 
 # Implementation
-Each experiment consists of a game (xxx_game.py) and a training algorithm (xxx_game_train.py). All experiments involve the interaction of separately trained agents in a two-dimensional grid. The game can be observed by setting **print_visuals=True** in the corresponding xxx_game_train.py file. Setting this value to false will train the scenario silently (printing some output after each episode completes), which is much faster. Expect to train for a couple of weeks to see any results. To run a scenario, simply execute:
+Each experiment consists of a game (xxx_game.py) and a training algorithm (xxx_game_train.py). All experiments involve the interaction of separately trained agents in a two-dimensional grid. The game can be observed by setting **print_visuals=True** in the corresponding xxx_game_train.py file. I coded this on a Mac, and haven't tried it on any other operating system. As such, I'd expect the visuals output to work on Linux, but perhaps not on Windows. Setting this value to false will train the scenario silently (printing some output after each episode completes), which is much faster. Expect to train for a couple of weeks to see any results. To run a scenario, simply execute:
 > python xxx_game_train.py
 
 Agents in all games can only see a certain number of tiles in all directions. This viewing distance is denoted by the **visible** variable in misc.py. If, for instance, **visible** is set to 4, each agent will be able to see 4 cells to the left, right, up, and down - in other words, a 9x9 grid. This visible area represents the agent's state, which is used when training each model. The game area is represented by a two-dimensional array where each item is coded via a different integer (0 for empty space, 1 for wall, etc). The numerical representations of different items in each game are specific to that game.
@@ -43,6 +43,20 @@ This experiment is implemented in coop_rocks_game.py and coop_rocks_game_train.p
 
 
 ## Alterac Valley
+Alterac Valley is an instanced, large-scale (40 versus 40) player versus player battleground in the World of Warcraft that has existed since Classic. During Classic, battles in Alterac Valley could sometimes last days. The aim of this battleground is to destroy the opposing team's commander. In order to do this, players must first take out lieutenants and complete some other objectives. The original battleground contained a large variety of side-goals and quests, that led to extremely rich back-and-forth exchanges between the two competing teams. The battleground was later reworked into a 15-minute scenario in order to fit into Blizzard's goals of providing quickly completable content. After these changes were made, a majority of Alterac Valley games consisted of each team ignoring the other and rushing to kill the commander. In this experiment, I wanted to determine whether AI teams would come to the same conclusion. Of course, my simulation is a vastly simplified version of Alterac Valley.
+
+This scenario different from the others in that each team is of fixed size, and each team member always spawns at a precise location. Each team consists of three different types of agent:
+- melee units that can attack adjacent units by "pushing" into them
+- ranged units that gain a "fire" ability which randomly targets an enemy within range
+- healer units that gain a "heal" ability which will heal a damaged friendly unit in range. Healers have no attack ability.
+
+Melee units do more damage to ranged and healers and take less damage from attacks.
+
+Each team also has a number of stationary lieutenants and a commander. Attacking a lieutenant will cause the agent to take damage. The agents should learn to only do this if a healer is nearby. Attacking the commander will cause the attacking unit to take damage equal to the number of lieutenants still alive. Hence, the attacking team must kill all lieutenants before attacking the commander to avoid their units being one-shot.
+
+Agents can, of course, attack members of the opposite team. If a team member runs out of hitpoints, they'll respawn at their original starting location, and a "reinforcements" counter will be decreased (the counter is also decreased if a unit kills themselves by attacking a commander or lieutenant). If a team's reinforcements counter reaches zero, the other team wins. Thus, there are two ways to win - kill the commander or kill the other team members until their reinforcements run out. This experiment should allow us to observe which path the AI considers more optimal.
 
 ![av_game_image](images/av_game.png)
 
+# Observations
+This section will contain observations obtained from these experiments, if anything interesting arises.

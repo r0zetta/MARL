@@ -64,3 +64,6 @@ Agents can, of course, attack members of the opposite team. If a team member run
 
 # Observations
 This section will contain observations obtained from these experiments, if anything interesting arises.
+
+## Coop rocks after some training
+![coop_rocks_animated](images/coop_rocks1.gif)

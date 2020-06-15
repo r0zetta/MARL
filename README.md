@@ -67,17 +67,26 @@ Agents can, of course, attack members of the opposite team. If a team member run
 # Observations
 This section will contain observations obtained from these experiments, if anything interesting arises.
 
-## Coop rocks after some training
+## Coop rocks
 I left this training for about a week. As training progressed, the average rewards per episode steadily increased. Here we can see that the miners and collectors actually started working together on the task, which is nice.
 ![coop_rocks_animated](images/coop_rocks1.gif)
 
-## PvP game after some training
+## PvP
 After some training, the agents in the PvP game tend to clump together. They are neither interested in seeking reward items, nor fighting the other team. Here are some examples:
 
 ![pvp_animated1](images/pvp_game1.gif)
 ![pvp_animated2](images/pvp_game2.gif)
 
+## Rocks
+I left this one training for more than a week, until average rewards per episode started to level off. The result was agents that were quite efficient at completing the task at hand:
 
+![rocks_animated1](images/rocks_game1.gif)
+![rocks_animated2](images/rocks_game2.gif)
 
+## Tag
+I haven't trained this one for any decent length of time yet.
+
+## AV
+I'm training this one now.
 
 

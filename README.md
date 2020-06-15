@@ -1,6 +1,8 @@
 # MARL
 Multi-Agent Reinforcement Learning Experiments
 
+**Note:** The stuff here is very much a work-in-progress. This is long-term research that I'm doing in-between other stuff, when I have time. Also, the code is probably rather terrible.
+
 # Requirements
 pytorch and numpy
 
@@ -66,4 +68,6 @@ Agents can, of course, attack members of the opposite team. If a team member run
 This section will contain observations obtained from these experiments, if anything interesting arises.
 
 ## Coop rocks after some training
+I left this training for about a week. As training progressed, the average rewards per episode steadily increased. Here we can see that the miners and collectors actually started working together on the task, which is nice.
 ![coop_rocks_animated](images/coop_rocks1.gif)
+

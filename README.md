@@ -89,4 +89,9 @@ I haven't trained this one for any decent length of time yet.
 ## AV
 I'm training this one now.
 
+# Findings
+Reward structure is super-important. Different reward structures lead to different emergent behaviours. For instance, in the PvP and tag scenarios, I tried applying negative rewards to an agent if they lots hitpoints or got tagged by the opposing team. This led to the agents staying away from each other - often just grouping in a corner. In an initial version of the AV scenario, I gave the team with the most reinforcements left a reward at the end of the episode, if it hit the time limit, which I think is wrong. Agents in that scenario need to learn that they'll take damage from hitting commanders or lieutenants. As such, at the beginning of training, reinforcments are lost because agents suicide against those units. Thus an actual "winner" reward should only be given if the team completes an objective.
 
+I have a feeling the neural net architecture I settled on might not have the capacity to learn very complex behaviours. The number of model parameters was chosen such that training wouldn't take an eternity. However, the models could possibly be tweaked. Which leads to...
+
+Playing and training could be parallelized. Playing the game doesn't take a great deal of CPU. Training does. So, it might be wise to refactor this code so that replays are saved as the game is played, and then pushed to a separate thread that kicks off training. This would be a rather large refactor, and multithreading has its own caveats. But perhaps it is worth a try.

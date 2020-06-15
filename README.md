@@ -71,3 +71,12 @@ This section will contain observations obtained from these experiments, if anyth
 I left this training for about a week. As training progressed, the average rewards per episode steadily increased. Here we can see that the miners and collectors actually started working together on the task, which is nice.
 ![coop_rocks_animated](images/coop_rocks1.gif)
 
+## PvP game after some training
+After some training, the agents in the PvP game tend to clump together. They are neither interested in seeking reward items, nor fighting the other team. Here are some examples:
+![pvp_animated1](images/pvp_game1.gif)
+![pvp_animated2](images/pvp_game2.gif)
+
+
+
+
+

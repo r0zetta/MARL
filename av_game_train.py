@@ -173,6 +173,7 @@ while True:
     actions = []
     rewards = []
     dones = []
+    gs.reset_markers()
     for index, agent in enumerate(gs.agents):
         all_preds.append(np.zeros(gs.num_actions))
         alive.append(index)

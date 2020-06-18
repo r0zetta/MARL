@@ -14,6 +14,8 @@ class game_space:
         self.commander_damage = 2
         self.small_reward = 0.001
         self.medium_reward = 0.01
+        self.got_hit = []
+        self.got_healed = []
         self.previous_states = prev_states
         self.initial_area = self.get_game_area()
         self.height, self.width = self.initial_area.shape
@@ -48,6 +50,10 @@ class game_space:
         self.create_commanders()
         self.create_kings()
         self.update_agent_positions()
+
+    def reset_markers(self):
+        self.got_hit = []
+        self.got_healed = []
 
     def create_commanders(self):
         self.commanders = []
@@ -172,6 +178,7 @@ class game_space:
     def hit_commander(self, xpos, ypos, dmg):
         index = self.get_commander_at_position(xpos, ypos)
         x, y, t, h = self.commanders[index]
+        self.got_hit.append([x, y])
         h = max(0, h-dmg)
         self.commanders[index] = [x, y, t, h]
         commanders_alive = [0,0]
@@ -188,6 +195,7 @@ class game_space:
     def hit_king(self, xpos, ypos, dmg):
         index = self.get_king_at_position(xpos, ypos)
         x, y, t, h = self.kings[index]
+        self.got_hit.append([x, y])
         h = max(0, h-dmg)
         self.kings[index] = [x, y, t, h]
         return h
@@ -305,6 +313,8 @@ class game_space:
                     healed = True
                 lowest_health_index = indices[np.argmin(hitpoints)]
                 x, y, t, u, h = self.agents[lowest_health_index]
+                if healed == True:
+                    self.got_healed.append([x, y])
                 h = min(self.agent_hp, h + 2)
                 self.agents[lowest_health_index] = [x, y, t, u, h]
         return healed
@@ -350,6 +360,7 @@ class game_space:
     def hit_agent(self, xpos, ypos, dmg):
         index = self.get_agent_at_position(xpos, ypos)
         x, y, t, u, h = self.agents[index]
+        self.got_hit.append([x, y])
         h = max(0, h-dmg)
         if h > 0:
             self.agents[index] = [x, y, t, u, h]
@@ -482,38 +493,61 @@ class game_space:
                 return True
         return False
 
-    def get_printable(self, item):
+    def was_hit(self, xpos, ypos):
+        for item in self.got_hit:
+            x, y = item
+            if x == xpos and y == ypos:
+                return True
+        return False
+
+    def was_healed(self, xpos, ypos):
+        for item in self.got_healed:
+            x, y = item
+            if x == xpos and y == ypos:
+                return True
+        return False
+
+    def get_printable(self, item, hit, healed):
+        bg = "40"
+        if hit == True:
+            bg = "41"
+        if healed == True:
+            bg = "42"
         if item == 1: # wall
             return "\x1b[2;37;40m" + "▒" + "\x1b[0m"
         elif item == 2: # t1 commander
-            return "\x1b[2;35;40m" + "o" + "\x1b[0m"
+            return "\x1b[2;35;" + str(bg) + "m" + "o" + "\x1b[0m"
         elif item == 3: # t2 commander
-            return "\x1b[2;36;40m" + "o" + "\x1b[0m"
+            return "\x1b[2;36;" + str(bg) + "m" + "o" + "\x1b[0m"
         elif item == 4: # t1 king
-            return "\x1b[1;33;40m" + "@" + "\x1b[0m"
+            return "\x1b[1;33;" + str(bg) + "m" + "@" + "\x1b[0m"
         elif item == 5: # t2 king
-            return "\x1b[1;32;40m" + "@" + "\x1b[0m"
+            return "\x1b[1;32;" + str(bg) + "m" + "@" + "\x1b[0m"
         elif item == 10: # t1 soldier
-            return "\x1b[1;33;40m" + "+" + "\x1b[0m"
+            return "\x1b[1;33;" + str(bg) + "m" + "+" + "\x1b[0m"
         elif item == 11: # t1 mage
-            return "\x1b[1;33;40m" + "x" + "\x1b[0m"
+            return "\x1b[1;33;" + str(bg) + "m" + "x" + "\x1b[0m"
         elif item == 12: # t1 healer
-            return "\x1b[1;33;40m" + "#" + "\x1b[0m"
+            return "\x1b[1;33;" + str(bg) + "m" + "#" + "\x1b[0m"
         elif item == 20: # t2 soldier
-            return "\x1b[1;32;40m" + "+" + "\x1b[0m"
-        elif item == 21: # t2 soldier
-            return "\x1b[1;32;40m" + "x" + "\x1b[0m"
-        elif item == 22: # t2 soldier
-            return "\x1b[1;32;40m" + "#" + "\x1b[0m"
+            return "\x1b[1;32;" + str(bg) + "m" + "+" + "\x1b[0m"
+        elif item == 21: # t2 mage
+            return "\x1b[1;32;" + str(bg) + "m" + "x" + "\x1b[0m"
+        elif item == 22: # t2 healer
+            return "\x1b[1;32;" + str(bg) + "m" + "#" + "\x1b[0m"
         else:
             return "\x1b[1;32;40m" + " " + "\x1b[0m"
 
     def print_game_space(self):
         printable = ""
         pad = self.visible - 1
-        for column in self.game_space[pad:-pad]:
-            for item in column[pad:-pad]:
-                printable += self.get_printable(item)
+        for y, column in enumerate(self.game_space[pad:-pad]):
+            ypos = y + pad
+            for x, item in enumerate(column[pad:-pad]):
+                xpos = x + pad
+                hit = self.was_hit(xpos, ypos)
+                healed = self.was_healed(xpos, ypos)
+                printable += self.get_printable(item, hit, healed)
             printable += "\n"
         return printable
 

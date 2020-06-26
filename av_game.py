@@ -9,9 +9,9 @@ class game_space:
         self.flatten_state = flatten_state
         self.visible = visible
         self.agent_hp = 10
-        self.king_hp = 100
-        self.commander_hp = 25
-        self.commander_damage = 2
+        self.commander_hp = 100
+        self.lieutenant_hp = 25
+        self.lieutenant_damage = 2
         self.small_reward = 0.001
         self.medium_reward = 0.01
         self.got_hit = []
@@ -47,43 +47,43 @@ class game_space:
         self.game_space = np.array(self.initial_game_space)
         self.reinforcements = [50, 50]
         self.create_new_agents()
+        self.create_lieutenants()
         self.create_commanders()
-        self.create_kings()
         self.update_agent_positions()
 
     def reset_markers(self):
         self.got_hit = []
         self.got_healed = []
 
-    def create_commanders(self):
-        self.commanders = []
-        self.num_commanders = [0,0]
-        hp = self.commander_hp
+    def create_lieutenants(self):
+        self.lieutenants = []
+        self.num_lieutenants = [0,0]
+        hp = self.lieutenant_hp
         for item in np.argwhere(self.initial_area==2):
             ypos, xpos = item
             team = 1
-            self.commanders.append([xpos, ypos, team, hp])
+            self.lieutenants.append([xpos, ypos, team, hp])
             self.game_space[ypos, xpos] = 0
-            self.num_commanders[0] += 1
+            self.num_lieutenants[0] += 1
         for item in np.argwhere(self.initial_area==3):
             ypos, xpos = item
             team = 2
-            self.commanders.append([xpos, ypos, team, hp])
+            self.lieutenants.append([xpos, ypos, team, hp])
             self.game_space[ypos, xpos] = 0
-            self.num_commanders[1] += 1
+            self.num_lieutenants[1] += 1
 
-    def create_kings(self):
-        self.kings = []
-        hp = self.king_hp
+    def create_commanders(self):
+        self.commanders = []
+        hp = self.commander_hp
         for item in np.argwhere(self.initial_area==4):
             ypos, xpos = item
             team = 1
-            self.kings.append([xpos, ypos, team, hp])
+            self.commanders.append([xpos, ypos, team, hp])
             self.game_space[ypos, xpos] = 0
         for item in np.argwhere(self.initial_area==5):
             ypos, xpos = item
             team = 2
-            self.kings.append([xpos, ypos, team, hp])
+            self.commanders.append([xpos, ypos, team, hp])
             self.game_space[ypos, xpos] = 0
 
     def create_new_agents(self):
@@ -148,8 +148,8 @@ class game_space:
                 space[ypos][xpos] = 0
         return space
 
-    def add_commanders(self, space):
-        for item in self.commanders:
+    def add_lieutenants(self, space):
+        for item in self.lieutenants:
             xpos, ypos, t, h = item
             if h > 0:
                 space[ypos][xpos] = 1+t
@@ -157,11 +157,17 @@ class game_space:
                 space[ypos][xpos] = 0
         return space
 
-    def add_kings(self, space):
-        for item in self.kings:
+    def add_commanders(self, space):
+        for item in self.commanders:
             xpos, ypos, t, h = item
             space[ypos][xpos] = 3+t
         return space
+
+    def get_lieutenant_at_position(self, xpos, ypos):
+        for index, item in enumerate(self.lieutenants):
+            x, y, t, h = item
+            if x == xpos and y == ypos:
+                return index
 
     def get_commander_at_position(self, xpos, ypos):
         for index, item in enumerate(self.commanders):
@@ -169,11 +175,22 @@ class game_space:
             if x == xpos and y == ypos:
                 return index
 
-    def get_king_at_position(self, xpos, ypos):
-        for index, item in enumerate(self.kings):
+    def hit_lieutenant(self, xpos, ypos, dmg):
+        index = self.get_lieutenant_at_position(xpos, ypos)
+        x, y, t, h = self.lieutenants[index]
+        self.got_hit.append([x, y])
+        h = max(0, h-dmg)
+        self.lieutenants[index] = [x, y, t, h]
+        lieutenants_alive = [0,0]
+        for item in self.lieutenants:
             x, y, t, h = item
-            if x == xpos and y == ypos:
-                return index
+            if t == 1:
+                if h > 0:
+                    lieutenants_alive[0] += 1
+            elif t == 2:
+                if h > 0:
+                    lieutenants_alive[1] += 1
+        self.num_lieutenants = list(lieutenants_alive)
 
     def hit_commander(self, xpos, ypos, dmg):
         index = self.get_commander_at_position(xpos, ypos)
@@ -181,29 +198,12 @@ class game_space:
         self.got_hit.append([x, y])
         h = max(0, h-dmg)
         self.commanders[index] = [x, y, t, h]
-        commanders_alive = [0,0]
-        for item in self.commanders:
-            x, y, t, h = item
-            if t == 1:
-                if h > 0:
-                    commanders_alive[0] += 1
-            elif t == 2:
-                if h > 0:
-                    commanders_alive[1] += 1
-        self.num_commanders = list(commanders_alive)
-
-    def hit_king(self, xpos, ypos, dmg):
-        index = self.get_king_at_position(xpos, ypos)
-        x, y, t, h = self.kings[index]
-        self.got_hit.append([x, y])
-        h = max(0, h-dmg)
-        self.kings[index] = [x, y, t, h]
         return h
 
     def update_agent_positions(self):
         space = np.array(self.initial_game_space)
+        space = self.add_lieutenants(space)
         space = self.add_commanders(space)
-        space = self.add_kings(space)
         space = self.add_agents(space)
         self.game_space = space
 
@@ -258,7 +258,7 @@ class game_space:
             else:
                 self.hit_agent(x, y, 2)
             return 1
-        # Check for enemy king
+        # Check for enemy commander
         if team == 1:
             targets = [5]
         else:
@@ -266,11 +266,11 @@ class game_space:
         coords = self.get_mage_target(xpos, ypos, targets)
         if coords is not False:
             x, y = coords
-            self.hit_king(x, y, 2)
-            king_damage = self.get_king_damage(x, y)
-            self.hit_agent(xpos, ypos, king_damage)
+            self.hit_commander(x, y, 2)
+            commander_damage = self.get_commander_damage(x, y)
+            self.hit_agent(xpos, ypos, commander_damage)
             return 10
-        # Check for enemy commanders
+        # Check for enemy lieutenants
         if team == 1:
             targets = [3]
         else:
@@ -278,8 +278,8 @@ class game_space:
         coords = self.get_mage_target(xpos, ypos, targets)
         if coords is not False:
             x, y = coords
-            self.hit_commander(x, y, 2)
-            self.hit_agent(xpos, ypos, self.commander_damage)
+            self.hit_lieutenant(x, y, 2)
+            self.hit_agent(xpos, ypos, self.lieutenant_damage)
             return 5
         return False
 
@@ -371,25 +371,25 @@ class game_space:
 
     def get_winner(self):
         winner = None
-        king_hp = {}
-        for item in self.kings:
+        commander_hp = {}
+        for item in self.commanders:
             x, y, t, h = item
-            king_hp[t] = h
+            commander_hp[t] = h
         if self.reinforcements[0] < 1:
             return 2
         elif self.reinforcements[1] < 1:
             return 1
-        elif king_hp[1] < 1:
+        elif commander_hp[1] < 1:
             return 2
-        elif king_hp[2] < 1:
+        elif commander_hp[2] < 1:
             return 1
         else:
             return None
 
-    def get_king_damage(self, xpos, ypos):
-        index = self.get_king_at_position(xpos, ypos)
-        x, y, t, h = self.kings[index]
-        damage = 2 * self.num_commanders[t-1]
+    def get_commander_damage(self, xpos, ypos):
+        index = self.get_commander_at_position(xpos, ypos)
+        x, y, t, h = self.commanders[index]
+        damage = 2 * self.num_lieutenants[t-1]
         return damage
 
     def move_agent(self, index, move):
@@ -419,14 +419,14 @@ class game_space:
                         self.hit_agent(newx, newy, dmg)
                         reward = self.small_reward
                     elif item == 3:
-                        self.hit_commander(newx, newy, 1)
-                        self.hit_agent(x, y, self.commander_damage)
+                        self.hit_lieutenant(newx, newy, 1)
+                        self.hit_agent(x, y, self.lieutenant_damage)
                         x, y, t, u, h = self.agents[index]
                         reward = self.small_reward * 5
                     elif item == 5:
-                        self.hit_king(newx, newy, 2)
-                        king_damage = self.get_king_damage(newx, newy)
-                        self.hit_agent(x, y, king_damage)
+                        self.hit_commander(newx, newy, 2)
+                        commander_damage = self.get_commander_damage(newx, newy)
+                        self.hit_agent(x, y, commander_damage)
                         x, y, t, u, h = self.agents[index]
                         reward = self.small_reward * 10
             elif t == 2:
@@ -438,14 +438,14 @@ class game_space:
                         self.hit_agent(newx, newy, dmg)
                         reward = self.small_reward
                     elif item == 2:
-                        self.hit_commander(newx, newy, 1)
-                        self.hit_agent(x, y, self.commander_damage)
+                        self.hit_lieutenant(newx, newy, 1)
+                        self.hit_agent(x, y, self.lieutenant_damage)
                         x, y, t, u, h = self.agents[index]
                         reward = self.small_reward * 5
                     elif item == 4:
-                        self.hit_king(newx, newy, 2)
-                        king_damage = self.get_king_damage(newx, newy)
-                        self.hit_agent(x, y, king_damage)
+                        self.hit_commander(newx, newy, 2)
+                        commander_damage = self.get_commander_damage(newx, newy)
+                        self.hit_agent(x, y, commander_damage)
                         x, y, t, u, h = self.agents[index]
                         reward = self.small_reward * 10
         if move == 4:
@@ -517,13 +517,13 @@ class game_space:
             bg = "42"
         if item == 1: # wall
             return "\x1b[2;37;40m" + "▒" + "\x1b[0m"
-        elif item == 2: # t1 commander
+        elif item == 2: # t1 lieutenant
             return "\x1b[2;35;" + str(bg) + "m" + "o" + "\x1b[0m"
-        elif item == 3: # t2 commander
+        elif item == 3: # t2 lieutenant
             return "\x1b[2;36;" + str(bg) + "m" + "o" + "\x1b[0m"
-        elif item == 4: # t1 king
+        elif item == 4: # t1 commander
             return "\x1b[1;33;" + str(bg) + "m" + "@" + "\x1b[0m"
-        elif item == 5: # t2 king
+        elif item == 5: # t2 commander
             return "\x1b[1;32;" + str(bg) + "m" + "@" + "\x1b[0m"
         elif item == 10: # t1 soldier
             return "\x1b[1;33;" + str(bg) + "m" + "+" + "\x1b[0m"

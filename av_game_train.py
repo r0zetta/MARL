@@ -162,12 +162,12 @@ while True:
     msg += " Rewards: " + "%.3f"%episode_rewards
     msg += "\nWinner: " + str(winner)
     msg += "\nT1 reinforcements: " + str(gs.reinforcements[0])
-    msg += " Commanders: " + str(gs.num_commanders[0])
-    msg += " King HP: " + str(gs.kings[0][3])
+    msg += " Lieutenants: " + str(gs.num_lieutenants[0])
+    msg += " Commander HP: " + str(gs.commanders[0][3])
     #msg += "\nTeam HP: " + ", ".join([str(x) for x in team_hp[0]])
     msg += "\nT2 reinforcements: " + str(gs.reinforcements[1])
-    msg += " Commanders: " + str(gs.num_commanders[1])
-    msg += " King HP: " + str(gs.kings[1][3])
+    msg += " Lieutenants: " + str(gs.num_lieutenants[1])
+    msg += " Commander HP: " + str(gs.commanders[1][3])
     #msg += "\nTeam HP: " + ", ".join([str(x) for x in team_hp[1]])
 
     alive = []

@@ -422,13 +422,13 @@ class game_space:
                         self.hit_commander(newx, newy, 1)
                         self.hit_agent(x, y, self.commander_damage)
                         x, y, t, u, h = self.agents[index]
-                        reward = self.small_reward
+                        reward = self.small_reward * 5
                     elif item == 5:
                         self.hit_king(newx, newy, 2)
                         king_damage = self.get_king_damage(newx, newy)
                         self.hit_agent(x, y, king_damage)
                         x, y, t, u, h = self.agents[index]
-                        reward = self.small_reward
+                        reward = self.small_reward * 10
             elif t == 2:
                 if u in [0,2]: # t2 soldier, healer
                     if item in [10, 11, 12]:
@@ -441,13 +441,13 @@ class game_space:
                         self.hit_commander(newx, newy, 1)
                         self.hit_agent(x, y, self.commander_damage)
                         x, y, t, u, h = self.agents[index]
-                        reward = self.small_reward
+                        reward = self.small_reward * 5
                     elif item == 4:
                         self.hit_king(newx, newy, 2)
                         king_damage = self.get_king_damage(newx, newy)
                         self.hit_agent(x, y, king_damage)
                         x, y, t, u, h = self.agents[index]
-                        reward = self.small_reward
+                        reward = self.small_reward * 10
         if move == 4:
             if t == 1:
                 if u == 0: # t1 soldier

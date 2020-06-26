@@ -19,7 +19,7 @@ model_type = "PG"
 with_guesses = False
 with_softmax = True
 print_visuals = True
-print_preds = False
+print_preds = True
 
 def print_all_preds(all_preds):
     msg = ""
@@ -39,16 +39,20 @@ def print_all_preds(all_preds):
         else:
             hp = red + "%02d"%h + end
         if h > 0:
-            if index not in stochastic:
-                if s == 0:
-                    first = "\x1b[6;30;42m" + "pred" + end
-                else:
-                    first = "\x1b[6;30;43m" + "pred" + end
+            if t == 1:
+                if u == 0:
+                    first = "\x1b[6;30;42m" + "mele" + end
+                elif u == 1:
+                    first = "\x1b[6;30;42m" + "mage" + end
+                elif u == 2:
+                    first = "\x1b[6;30;42m" + "heal" + end
             else:
-                if s == 0:
-                    first = gre + "stoc" + end
-                else:
-                    first = yel + "stoc" + end
+                if u == 0:
+                    first = "\x1b[6;30;43m" + "mele" + end
+                elif u == 1:
+                    first = "\x1b[6;30;43m" + "mage" + end
+                elif u == 2:
+                    first = "\x1b[6;30;43m" + "heal" + end
             move = np.argmax(pred)
             plist[index].append(move)
             if len(plist[index]) > 30:

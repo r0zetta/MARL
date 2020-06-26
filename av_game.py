@@ -257,7 +257,7 @@ class game_space:
                 self.hit_agent(x, y, 1)
             else:
                 self.hit_agent(x, y, 2)
-            return True
+            return 1
         # Check for enemy king
         if team == 1:
             targets = [5]
@@ -269,7 +269,7 @@ class game_space:
             self.hit_king(x, y, 2)
             king_damage = self.get_king_damage(x, y)
             self.hit_agent(xpos, ypos, king_damage)
-            return True
+            return 10
         # Check for enemy commanders
         if team == 1:
             targets = [3]
@@ -280,7 +280,7 @@ class game_space:
             x, y = coords
             self.hit_commander(x, y, 2)
             self.hit_agent(xpos, ypos, self.commander_damage)
-            return True
+            return 5
         return False
 
     def heal(self, index):
@@ -309,14 +309,13 @@ class game_space:
                     hitpoints.append(h)
             if len(indices) > 0:
                 lowest_health = np.min(hitpoints)
-                if lowest_health < self.agent_hp:
-                    healed = True
                 lowest_health_index = indices[np.argmin(hitpoints)]
                 x, y, t, u, h = self.agents[lowest_health_index]
-                if healed == True:
+                newh = min(self.agent_hp, h + 2)
+                if newh != h:
+                    healed = True
                     self.got_healed.append([x, y])
-                h = min(self.agent_hp, h + 2)
-                self.agents[lowest_health_index] = [x, y, t, u, h]
+                self.agents[lowest_health_index] = [x, y, t, u, newh]
         return healed
 
     def get_state_size(self):
@@ -412,10 +411,10 @@ class game_space:
             moved = True
         else:
             if t == 1:
-                if u == 0: # t1 soldier
+                if u in [0,2]: # t1 soldier, healer
                     if item in [20, 21, 22]:
                         dmg = 1
-                        if item != 20:
+                        if item != 20 and u == 0:
                             dmg = 2
                         self.hit_agent(newx, newy, dmg)
                         reward = self.small_reward
@@ -431,10 +430,10 @@ class game_space:
                         x, y, t, u, h = self.agents[index]
                         reward = self.small_reward
             elif t == 2:
-                if u == 0: # t2 soldier
+                if u in [0,2]: # t2 soldier, healer
                     if item in [10, 11, 12]:
                         dmg = 1
-                        if item != 10:
+                        if item != 10 and u == 0:
                             dmg = 2
                         self.hit_agent(newx, newy, dmg)
                         reward = self.small_reward
@@ -455,31 +454,34 @@ class game_space:
                     pass
                 elif u == 1: # t1 mage
                     ret = self.mage_shoot(index)
-                    if ret == True:
-                        reward = self.small_reward
+                    if ret != False:
+                        reward = self.small_reward * ret
                         x, y, t, u, h = self.agents[index]
                 elif u == 2: # t1 healer
                     ret = self.heal(index)
                     if ret == True:
-                        reward = self.small_reward
+                        reward = self.small_reward * 10
+                        x, y, t, u, h = self.agents[index]
             elif t == 2:
                 if u == 0: # t2 soldier
                     pass
                 elif u == 1: # t2 mage
                     ret = self.mage_shoot(index)
-                    if ret == True:
-                        reward = self.small_reward
+                    if ret != False:
+                        reward = self.small_reward * ret
                         x, y, t, u, h = self.agents[index]
                 elif u == 2: # t2 healer
                     ret = self.heal(index)
                     if ret == True:
-                        reward = self.small_reward
+                        reward = self.small_reward * 10
+                        x, y, t, u, h = self.agents[index]
 
         if moved == True:
             if self.check_for_overlap(newx, newy) == True:
                 moved = False
 
         if moved == True:
+            reward = self.small_reward * 0.1
             x = newx
             y = newy
 

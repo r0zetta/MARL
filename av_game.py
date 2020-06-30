@@ -14,6 +14,7 @@ class game_space:
         self.lieutenant_damage = 2
         self.small_reward = 0.001
         self.medium_reward = 0.01
+        self.num_reinforcements = 300
         self.got_hit = []
         self.got_healed = []
         self.previous_states = prev_states
@@ -45,7 +46,7 @@ class game_space:
     def reset(self):
         self.initial_game_space = np.array(np.where(self.initial_area > 1, 0, self.initial_area))
         self.game_space = np.array(self.initial_game_space)
-        self.reinforcements = [50, 50]
+        self.reinforcements = [self.num_reinforcements, self.num_reinforcements]
         self.create_new_agents()
         self.create_lieutenants()
         self.create_commanders()

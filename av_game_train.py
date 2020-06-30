@@ -41,18 +41,18 @@ def print_all_preds(all_preds):
         if h > 0:
             if t == 1:
                 if u == 0:
-                    first = "\x1b[6;30;42m" + "mele" + end
-                elif u == 1:
-                    first = "\x1b[6;30;42m" + "mage" + end
-                elif u == 2:
-                    first = "\x1b[6;30;42m" + "heal" + end
-            else:
-                if u == 0:
                     first = "\x1b[6;30;43m" + "mele" + end
                 elif u == 1:
                     first = "\x1b[6;30;43m" + "mage" + end
                 elif u == 2:
                     first = "\x1b[6;30;43m" + "heal" + end
+            else:
+                if u == 0:
+                    first = "\x1b[6;30;42m" + "mele" + end
+                elif u == 1:
+                    first = "\x1b[6;30;42m" + "mage" + end
+                elif u == 2:
+                    first = "\x1b[6;30;42m" + "heal" + end
             move = np.argmax(pred)
             plist[index].append(move)
             if len(plist[index]) > 30:
@@ -76,7 +76,7 @@ else:
             model_num = m.group(1)
             trained_models.append(int(model_num))
 
-#random.seed(1)
+random.seed(1)
 flatten_state, prev_states = get_state_params(model_type)
 gs = game_space(visible=visible, prev_states=prev_states,
                 flatten_state=flatten_state, split_layers=True)

@@ -18,7 +18,7 @@ min_epsilon = 0
 model_type = "PG"
 with_guesses = False
 with_softmax = True
-print_visuals = False
+print_visuals = True
 print_preds = True
 
 def print_all_preds(all_preds):

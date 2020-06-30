@@ -412,43 +412,49 @@ class game_space:
             moved = True
         else:
             if t == 1:
-                if u in [0,2]: # t1 soldier, healer
-                    if item in [20, 21, 22]:
-                        dmg = 1
-                        if item != 20 and u == 0:
-                            dmg = 2
-                        self.hit_agent(newx, newy, dmg)
-                        reward = self.small_reward
-                    elif item == 3:
-                        self.hit_lieutenant(newx, newy, 1)
-                        self.hit_agent(x, y, self.lieutenant_damage)
-                        x, y, t, u, h = self.agents[index]
-                        reward = self.small_reward * 5
-                    elif item == 5:
-                        self.hit_commander(newx, newy, 2)
-                        commander_damage = self.get_commander_damage(newx, newy)
-                        self.hit_agent(x, y, commander_damage)
-                        x, y, t, u, h = self.agents[index]
-                        reward = self.small_reward * 10
+                dmg = 1
+                if item in [20, 21, 22]:
+                    if item != 20 and u == 0:
+                        dmg = 2
+                    self.hit_agent(newx, newy, dmg)
+                    reward = self.small_reward
+                elif item == 3:
+                    if u == 0:
+                        dmg = 2
+                    self.hit_lieutenant(newx, newy, dmg)
+                    self.hit_agent(x, y, self.lieutenant_damage)
+                    x, y, t, u, h = self.agents[index]
+                    reward = self.small_reward * 5
+                elif item == 5:
+                    if u == 0:
+                        dmg = 2
+                    self.hit_commander(newx, newy, dmg)
+                    commander_damage = self.get_commander_damage(newx, newy)
+                    self.hit_agent(x, y, commander_damage)
+                    x, y, t, u, h = self.agents[index]
+                    reward = self.small_reward * 10
             elif t == 2:
-                if u in [0,2]: # t2 soldier, healer
-                    if item in [10, 11, 12]:
-                        dmg = 1
-                        if item != 10 and u == 0:
-                            dmg = 2
-                        self.hit_agent(newx, newy, dmg)
-                        reward = self.small_reward
-                    elif item == 2:
-                        self.hit_lieutenant(newx, newy, 1)
-                        self.hit_agent(x, y, self.lieutenant_damage)
-                        x, y, t, u, h = self.agents[index]
-                        reward = self.small_reward * 5
-                    elif item == 4:
-                        self.hit_commander(newx, newy, 2)
-                        commander_damage = self.get_commander_damage(newx, newy)
-                        self.hit_agent(x, y, commander_damage)
-                        x, y, t, u, h = self.agents[index]
-                        reward = self.small_reward * 10
+                dmg = 1
+                if item in [10, 11, 12]:
+                    if item != 10 and u == 0:
+                        dmg = 2
+                    self.hit_agent(newx, newy, dmg)
+                    reward = self.small_reward
+                elif item == 2:
+                    if u == 0:
+                        dmg = 2
+                    self.hit_lieutenant(newx, newy, dmg)
+                    self.hit_agent(x, y, self.lieutenant_damage)
+                    x, y, t, u, h = self.agents[index]
+                    reward = self.small_reward * 5
+                elif item == 4:
+                    if u == 0:
+                        dmg = 2
+                    self.hit_commander(newx, newy, dmg)
+                    commander_damage = self.get_commander_damage(newx, newy)
+                    self.hit_agent(x, y, commander_damage)
+                    x, y, t, u, h = self.agents[index]
+                    reward = self.small_reward * 10
         if move == 4:
             if t == 1:
                 if u == 0: # t1 soldier
@@ -482,7 +488,7 @@ class game_space:
                 moved = False
 
         if moved == True:
-            reward = self.small_reward * 0.1
+            reward = self.small_reward * 0.01
             x = newx
             y = newy
 

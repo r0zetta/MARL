@@ -69,6 +69,7 @@ This section will contain observations obtained from these experiments, if anyth
 
 ## Coop rocks
 I left this training for about a week. As training progressed, the average rewards per episode steadily increased. Here we can see that the miners and collectors actually started working together on the task, which is nice.
+
 ![coop_rocks_animated](images/coop_rocks1.gif)
 
 ## PvP
@@ -87,10 +88,14 @@ I left this one training for more than a week, until average rewards per episode
 I haven't trained this one for any decent length of time yet.
 
 ## AV
-I'm training this one now. After 200 episodes (a few hours, PvP is already happening!)
+I'm training this one now. After 200 episodes (a few hours), PvP is already happening! However, this is likely due to the policies being mostly stochastic.
+
 ![av_animated1](images/av_game1.gif)
 ![av_animated2](images/av_game2.gif)
 ![av_animated3](images/av_game3.gif)
+
+After about 650 episodes (trained overnight), the agents mostly fight in the middle of the map. Some get stuck in corners, and others explore a bit. The agents have learned to take out some lieutenants, but haven't figured out where the commanders are.
+
 
 
 # Findings

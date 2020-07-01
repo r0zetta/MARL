@@ -53,10 +53,10 @@ Alterac Valley is an instanced, large-scale (40 versus 40) player versus player 
 
 This scenario different from the others in that each team is of fixed size, and each team member always spawns at a precise location, and the map is not randomly generated. Each team consists of three different types of agent:
 - melee units that can attack adjacent units by "pushing" into them
-- ranged units that gain a "fire" ability which randomly targets an enemy within range
-- healer units that gain a "heal" ability which will heal a damaged friendly unit in range. Healers have no attack ability.
+- ranged units that gain a "fire" ability which randomly targets an enemy within range and does damage
+- healer units that gain a "heal" ability which will heal a damaged friendly unit in range
 
-Melee units do more damage to ranged and healers and take less damage from attacks.
+All units can attack adjacent enemies by pushing into them, but melee units deal a lot more damage by doing this. Melee units deal more damage to ranged and healers and take less damage from all attacks.
 
 Each team also has a number of stationary lieutenants and a commander. Attacking a lieutenant will cause the agent to take damage. The agents should learn to only do this if a healer is nearby. Attacking the commander will cause the attacking unit to take damage equal to the number of lieutenants still alive. Hence, the attacking team must kill all lieutenants before attacking the commander to avoid their units being one-shot.
 
@@ -94,7 +94,13 @@ I'm training this one now. After 200 episodes (a few hours), PvP is already happ
 ![av_animated2](images/av_game2.gif)
 ![av_animated3](images/av_game3.gif)
 
-After about 650 episodes (trained overnight), the agents mostly fight in the middle of the map. Some get stuck in corners, and others explore a bit. The agents have learned to take out some lieutenants, but haven't figured out where the commanders are.
+After about 650 episodes (trained overnight), the agents mostly fight in the middle of the map. Some get stuck in corners, and others explore a bit. The agents have learned to take out some lieutenants, but haven't figured out where the commanders are. Note that agents receive a slightly better reward for attacking lieutenants and an even better reward for attacking commanders (than for attacking the opposing team).
+
+![av_animated4](images/av_game4.gif)
+
+Agents with an "action button" - i.e. mages and healers have learned to prefer spamming that button most of the time. In older experiments I noticed they simply stood still at their spwan points and spammed their action buttons, so I added a small reward for successfully moving to an unoccupied tile in order to encourage movement. This hasn't seemed to have helped all that much. Ideally, agents should travel in groups, with a healer. Agents don't seem to mind dying and respawning - possibly because there's no negative reward associated with it.
+
+![av_preds1](images/av_game4_preds.gif)
 
 
 

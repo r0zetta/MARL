@@ -1,7 +1,7 @@
 # MARL
 Multi-Agent Reinforcement Learning Experiments
 
-**Note:** The stuff here is very much a work-in-progress. This is long-term research that I'm doing in-between other stuff, when I have time. Also, the code is probably rather terrible.
+**Note:** The stuff here is very much a work-in-progress. This is long-term research that I'm doing in-between other stuff, when I have time.
 
 # Requirements
 pytorch and numpy

@@ -102,7 +102,9 @@ Agents with an "action button" - i.e. mages and healers have learned to prefer s
 
 ![av_preds1](images/av_game4_preds.gif)
 
+After another day of training, we see the following behaviour. Melee agents smash against each other and respawn over and over. An agent may occasionally go after a lieutenant, but neither team has really figured out the alternate win condition. Healers and mages spam their action button almost 100% of the time, even if there are no valid targets in sight. As such, they really don't move around much (even though there's a small reward for moving). Interestingly, healers are capable of soloing the alternate win condition (by hitting a lieutenant and then healing themselves over and over). However, they don't opt for that behaviour. This likely indicates that rewards for healing outweigh rewards for other objectives. At this point, it is probably better to adjust the reward structure and start over. 
 
+![av_animated5](images/av_game5.gif)
 
 # Findings
 Reward structure is super-important. Different reward structures lead to different emergent behaviours. For instance, in the PvP and Tag scenarios, I tried giving negative rewards to agents that lost hitpoints or got tagged by the opposing team. This led to agents learning to stay away from each other - often just grouping in opposite corners. In an initial version of the AV scenario, I gave the team with the most reinforcements a reward at the end of the episode, if it hit the step limit, which I think is wrong. Agents in that scenario need to learn that they'll take damage from hitting commanders or lieutenants. As such, at the beginning of training, reinforcments are lost because agents suicide against those units. Thus an actual "winner" reward should only be given if a team completes an objective.

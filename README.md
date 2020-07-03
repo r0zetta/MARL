@@ -106,6 +106,11 @@ After another day of training, we see the following behaviour. Melee agents smas
 
 ![av_animated5](images/av_game5.gif)
 
+**Update:** after adjusting the reward for healing and starting training from scratch, the behaviour below is observed after 600 episodes. Teams now tend to move as a group a little more. The green team has always been more aggressive than the yellow team. I'm not sure why this is the case. The agents in the green team get to move after the agents in the yellow team (green team is team 2). Perhaps this is the reason. I also adjusted the range at which mage shoot works from 2 to 3 to see if it has any effect. I will allow this to continue training.
+
+![av_animated6](images/av_game6.gif)
+
+
 # Findings
 Reward structure is super-important. Different reward structures lead to different emergent behaviours. For instance, in the PvP and Tag scenarios, I tried giving negative rewards to agents that lost hitpoints or got tagged by the opposing team. This led to agents learning to stay away from each other - often just grouping in opposite corners. In an initial version of the AV scenario, I gave the team with the most reinforcements a reward at the end of the episode, if it hit the step limit, which I think is wrong. Agents in that scenario need to learn that they'll take damage from hitting commanders or lieutenants. As such, at the beginning of training, reinforcments are lost because agents suicide against those units. Thus an actual "winner" reward should only be given if a team completes an objective.
 

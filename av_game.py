@@ -15,6 +15,8 @@ class game_space:
         self.small_reward = 0.001
         self.medium_reward = 0.01
         self.num_reinforcements = 300
+        self.heal_distance = 3
+        self.shoot_distance = 3
         self.got_hit = []
         self.got_healed = []
         self.previous_states = prev_states
@@ -232,7 +234,7 @@ class game_space:
     def get_mage_target(self, xpos, ypos, targets):
         enemy_coords = []
         for t in targets:
-            coords = self.get_item_in_visible(xpos, ypos, t, 2)
+            coords = self.get_item_in_visible(xpos, ypos, t, self.shoot_distance)
             if len(coords) > 0:
                 for c in coords:
                     enemy_coords.append(c)
@@ -294,7 +296,7 @@ class game_space:
             targets = [20, 21, 22]
         friend_coords = []
         for t in targets:
-            coords = self.get_item_in_visible(xpos, ypos, t, 3)
+            coords = self.get_item_in_visible(xpos, ypos, t, self.heal_distance)
             if len(coords) > 0:
                 for c in coords:
                     friend_coords.append(c)
@@ -467,7 +469,7 @@ class game_space:
                 elif u == 2: # t1 healer
                     ret = self.heal(index)
                     if ret == True:
-                        reward = self.small_reward * 10
+                        reward = self.small_reward
                         x, y, t, u, h = self.agents[index]
             elif t == 2:
                 if u == 0: # t2 soldier
@@ -480,7 +482,7 @@ class game_space:
                 elif u == 2: # t2 healer
                     ret = self.heal(index)
                     if ret == True:
-                        reward = self.small_reward * 10
+                        reward = self.small_reward
                         x, y, t, u, h = self.agents[index]
 
         if moved == True:
